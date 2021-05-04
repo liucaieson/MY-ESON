@@ -1,6 +1,4 @@
-## My notes
-
-## <div id="react">REACT</div>- [<div id="react">REACT</div>](#div-idreactreactdiv)
+- [REACT](#react)
   - [1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较](#1pure-components和components的区别purecomponent-将对属性和状态进行浅比较)
   - [2.React的props和state分别是什么？](#2react的props和state分别是什么)
   - [3.React 中 setState 什么时候是同步的，什么时候是异步的](#3react-中-setstate-什么时候是同步的什么时候是异步的)
@@ -21,7 +19,8 @@
   - [18.在组件类中方法的推荐的书写顺序是什么?](#18在组件类中方法的推荐的书写顺序是什么)
   - [19.如何在调整浏览器大小时重新渲染视图?](#19如何在调整浏览器大小时重新渲染视图)
   - [20.你怎么做的权限验证？](#20你怎么做的权限验证)
-- [<div id="redux"> Redux</div>](#div-idredux-reduxdiv)
+  - [21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理](#21react项目中constructor-thistarget--thisfuncbindthis-jsx里onchangethistarget的写法为什么要比非-bind的func----的写法效率高-请解释其中的原理)
+- [Redux](#redux)
   - [说一下redux。以及redux-thunk和redux-saga，dva.js。](#说一下redux以及redux-thunk和redux-sagadvajs)
   - [聊聊 Redux 和 Vuex 的设计思想](#聊聊-redux-和-vuex-的设计思想)
   - [我可以在redux触发一个action吗？](#我可以在redux触发一个action吗)
@@ -29,15 +28,15 @@
   - [国际化（react-intl）](#国际化react-intl)
   - [为什么在componentDidmount里写请求](#为什么在componentdidmount里写请求)
   - [react事件绑定](#react事件绑定)
-- [<div id="hooks">Hooks<?div>](#div-idhookshooksdiv)
+- [Hooks](#hooks)
   - [为什么不能在条件语句循环语句中使用hooks](#为什么不能在条件语句循环语句中使用hooks)
-  - [UseCallback 和useMemo](#usecallback-和usememo)
+  - [UseCallback 和 useMemo](#usecallback-和-usememo)
   - [React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化](#react-项目中有哪些细节可以优化实际开发中都做过哪些性能优化)
-- [<div id="browser">浏览器</div>](#div-idbrowser浏览器div)
+- [浏览器](#浏览器)
   - [cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑](#cookiessessionsessionstoragelocalstoragesession储存于服务端cookies存储于浏览器本地存储有什么坑)
   - [多window tab页签之间的通信怎么做](#多window-tab页签之间的通信怎么做)
   - [Xss攻击，反射性，储存型，dom型；](#xss攻击反射性储存型dom型)
-- [<div id="css">CSS</div>](#div-idcsscssdiv)
+- [CSS](#css)
   - [是否熟悉flex。](#是否熟悉flex)
   - [css实现固定宽高比用](#css实现固定宽高比用)
   - [Css绘制三角形](#css绘制三角形)
@@ -52,7 +51,10 @@
   - [Css会阻塞渲染吗？](#css会阻塞渲染吗)
   - [DOMContentLoaded方法会在什么时候执行？](#domcontentloaded方法会在什么时候执行)
   - [Background书写顺序](#background书写顺序)
-- [<div id="js">JS</div>](#div-idjsjsdiv)
+- [JS](#js)
+  - [原型链](#原型链)
+  - [继承](#继承)
+  - [call、apply 以及 bind](#callapply-以及-bind)
   - [For in 迭代和for of区别](#for-in-迭代和for-of区别)
   - [websocket有时会出现掉线的问题，怎么解决？](#websocket有时会出现掉线的问题怎么解决)
   - [如何判断图片加载完成。](#如何判断图片加载完成)
@@ -62,13 +64,16 @@
   - [手机软键盘只允许用户输入数字和小数点](#手机软键盘只允许用户输入数字和小数点)
   - [深拷贝和浅拷贝的区别？](#深拷贝和浅拷贝的区别)
   - [js函数参数通过的值传递还是引用传递](#js函数参数通过的值传递还是引用传递)
+  - [promise原理](#promise原理)
   - [如何给fetch增加超时时间](#如何给fetch增加超时时间)
-  - [1.如何前端进行代码检测](#1如何前端进行代码检测)
-  - [2.你的前端项目资源缓存配置策略](#2你的前端项目资源缓存配置策略)
-  - [web font](#web-font)
+  - [js事件循环](#js事件循环)
+  - [node事件循环](#node事件循环)
+  - [如何前端进行代码检测](#如何前端进行代码检测)
+  - [你的前端项目资源缓存配置策略](#你的前端项目资源缓存配置策略)
+  - [web font 网页字体](#web-font-网页字体)
   - [什么是 Open Graph 协议，用来做什么](#什么是-open-graph-协议用来做什么)
   - [SVG图标颜色文字继承与填充](#svg图标颜色文字继承与填充)
-- [<div id="vue">VUE</div>](#div-idvuevuediv)
+- [VUE](#vue)
   - [Vue动画的原理](#vue动画的原理)
   - [vue中provide和inject 用法](#vue中provide和inject-用法)
   - [Vue中mixins的用法](#vue中mixins的用法)
@@ -91,13 +96,20 @@
   - [Vue中组件生命周期调用顺序说一下](#vue中组件生命周期调用顺序说一下)
   - [Vue2.x组件通信有哪些方式？](#vue2x组件通信有哪些方式)
   - [你都做过哪些Vue的性能优化？](#你都做过哪些vue的性能优化)
-- [<div id="webpack">webpack</div>](#div-idwebpackwebpackdiv)
+- [webpack](#webpack)
   - [Webpack loader和 plugin的区别](#webpack-loader和-plugin的区别)
   - [Webpack tree-shaking](#webpack-tree-shaking)
   - [webpack的打包原理](#webpack的打包原理)
+- [其他](#其他)
   - [为什么要使用pm2](#为什么要使用pm2)
   - [什么是服务端渲染](#什么是服务端渲染)
   - [ts 的as const 什么意思](#ts-的as-const-什么意思)
+  - [如何在https里面发送http请求](#如何在https里面发送http请求)
+  - [现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目](#现在有多个spa的项目有angular的有vue的和react的如何将他们合并成一个大统一的spa项目)
+
+
+
+## REACT
 
 ### 1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较
 React fober架构说说你的；理解（在 react16 之前的版本中，组建的渲染是同步的动作，如果组件包含很多层子组件，渲染时间比较长，在组件渲染的过程中又无法被打断，会导致这期间用户无法与网页进行交互。 所有的任务都是按照先后顺序，没有优先级可言，这样就会导致优先级比较高的任务无法优先被执行。大量的同步计算任务阻塞了浏览器的ui渲染。 解决思路：讲任务切割定时把控制权交给浏览器
@@ -149,9 +161,13 @@ Cssmoudle 使用css classname库来组装 , css in js的方式
 （监听和移除监听）
 ### 20.你怎么做的权限验证？
 
-## <div id="redux"> Redux</div>
+### 21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理
+bind之后锁定了上下文，不用向上查找
+箭头函数是实例上的方法，而函数声明是在原型上的方法。
+
+##  Redux
 ### 说一下redux。以及redux-thunk和redux-saga，dva.js。
-(处理异步操作，redux操作是同步的，没有副作用。因为视图的渲染是同步的网络请求是异步的，请求结束后，视图可能渲染完毕，数据也就没用的，redux就是解决这个问题，异步解决视图更新。)
+处理异步操作，redux操作是同步的，没有副作用。因为视图的渲染是同步的网络请求是异步的，请求结束后，视图可能渲染完毕，数据也就没用的，redux就是解决这个问题，异步解决视图更新。
 单一数据源，state只读，reducer必须是纯函数，
 Redux-Thunk：提供Redux的异步解决方案，弥补Redux功能的不足，让dispatch多支持了函数类型，转换异步操作，生成原始的action，这样，reducer函数就能处理相应的action
 store为保存的事件
@@ -175,13 +191,13 @@ React 内部将事件做了兼容处理，原生事件为空函数，将事件�
 React 发现事件有对应事件才会绑定React并不是将click事件绑在该div的真实DOM上，而是在document处监听所有支持的事件，当事件发生并冒泡至document处时，React将事件内容封装并交由真正的处理函数运行。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件。
 另外冒泡到 document 上的事件也不是原生浏览器事件，而是 React 自己实现的合成事件。因此我们如果不想要事件冒泡的话，调用 event.stopPropagation 是无效的，而应该调用 event.preventDefault。
 
-##  <div id="hooks">Hooks<?div>
+## Hooks
 ### 为什么不能在条件语句循环语句中使用hooks
 1.不要 在 循环、条件语句或者嵌套函数中调用hooks 
 2.只能在 React 函数组件中调用hooks
 Hooks以链表的形式储存了hooks，在条件语句如果第一次生成了hooks，第二次渲染条件为false会导致取到了上一个hooks。
 
-### UseCallback 和useMemo 
+### UseCallback 和 useMemo 
 `useCallback` 和 `useMemo `都是性能优化的手段，在声明周期内缓存函数，避免多次渲染。
 `useCallback`需要配合`React.memo`使用
 `React.memo`对比函数组件的props
@@ -190,7 +206,7 @@ Hooks以链表的形式储存了hooks，在条件语句如果第一次生成了h
 资源减少式最有效的提升首屏加载的体验
 减少子组件渲染
 
-##  <div id="browser">浏览器</div>
+## 浏览器
 ### cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑
 （cookies 只有4kb，可以被浏览器带上。Local。Ios隐私模式，会报错）
 Localsorage的异常处理用try catch处理
@@ -215,7 +231,7 @@ DOM XSS：比如eval（）会执行恶意代码。
 中间人攻击：
 无线攻击：
 
-## <div id="css">CSS</div>
+## CSS
 ### 是否熟悉flex。
 （flex-grow：项目的放大比例，默认为0，即如果存在剩余空间，也不放大。flex-shrink：项目的缩小比例，默认为1，即如果空间不足，该项目将缩小。）
 实现函数柯里化（）
@@ -240,9 +256,9 @@ Flex布局，当flex-grow小于1时，什么表现（按照比例分配剩余空
 ### 了解过grid布局吗?
 (grid布局是flex布局的补充)
 ### Word-break，word-wrap，white-space区别？
-white-space控制空白字符，控制自动换行，
-word-break控制单词如何被拆分换行碰到边界一律换行
-word-wrap控制单词拆分换行只有长到溢出的单词会被拆分换行）          
+`white-space`控制空白字符，控制自动换行，
+`word-break`控制单词如何被拆分换行碰到边界一律换行
+`word-wrap`控制单词拆分换行只有长到溢出的单词会被拆分换行）          
 ### 什么情况会导致网页重绘，和重排，
 （重绘：修改dom，修改样式表，用户事件。如何减少重绘和重排，合并dom操作和样式修改。批量修改dom，隐藏元素修改后再显示，使用文档片段doument.Fragment构建一个子树，再拷贝回文档，讲元素拷贝到一个脱离稳定的节点，在拷贝回来、动画使用定位脱离文档，css3加速）
 ### Css会阻塞渲染吗？
@@ -252,7 +268,41 @@ css不会阻塞dom解析，css会阻塞dom渲染，css加载会阻塞后面的js
 ### Background书写顺序
 （color ，image repeat attachment  postion）
 
-## <div id="js">JS</div>
+## JS
+
+### 原型链
+每一个函数都有一个prototype属性，这个属性指向函数的原型，js创建对象会从原型继承属性
+`__proto__` 这个属性会指向对象的原型
+`constructor` 会指向关联的构造函数
+读取实例属性，找不到会取关联的原型中找，会顺着原型链找，本质是一个复杂的链表
+并不是继承，继承意味着复制操作，然而 JavaScript 默认并不会复制对象的属性，相反，JavaScript 只是在两个对象之间创建一个关联，这样，一个对象就可以通过委托访问另一个对象的属性和函数，所以与其叫继承，委托的说法反而更准确些。
+
+### 继承
+* 原型链继承 将父类的实例作为子类的原型
+  - 优点：父类方法可以复用
+
+  - 缺点：
+  父类的引用属性会被所有子类实例共享
+   子类构建实例时不能向父类传递参数
+
+* 构造函数继承 将父类构造函数的内容复制给了子类的构造函数。
+   - 优点：和原型链继承完全反过来。
+父类的引用属性不会被共享
+子类构建实例时可以向父类传递参数
+  - 缺点：父类的方法不能复用，子类实例的方法每次都是单独创建的。
+
+
+### call、apply 以及 bind 
+call 和 apply 的共同点
+它们的共同点是，都能够改变函数执行时的上下文，将一个对象的方法交给另一个对象来执行，并且是立即执行的。借用其他的对象方法，节省内存占用。
+区别是参数区别
+* 调用 call 的对象，必须是个函数 Function。
+* call 的第一个参数，是一个对象。 Function 的调用者，将会指向这个对象。如果不传，则默认为全局对象 window。
+* 第二个参数开始，可以接收任意个参数。每个参数会映射到相应位置的 Function 的参数上。但是如果将所有的参数作为数组传入，它们会作为一个整体映射到 Function 对应的第一个参数上，之后参数都为空。
+* apply调用者必须是函数 Function，并且只接收两个参数，第一个参数的规则与 call 一致。
+* apply第二个参数，必须是数组或者类数组，它们会被转换成类数组，传入 Function 中，并且会被映射到 Function 对应的参数上。这也是 call 和 apply 之间，很重要的一个区别。
+
+bind() 方法创建一个新的函数，改变函数体内的 this 指向。不同的是，bind 方法的返回值是函数，并且需要稍后调用，才会执行。
 
 ### For in 迭代和for of区别
 1.index索引为字符串型数字，不能直接进行几何运算
@@ -287,21 +337,47 @@ Fetch为原生方法，fetch第一个参数为url，第二个参数默认为get�
 ### js函数参数通过的值传递还是引用传递
 （值传递，对象传递的也是引用地址的值，传递的是副本）
 
+### promise原理
+ Promise 必须为以下三种状态之一：等待态（Pending）、执行态（Fulfilled）和拒绝态（Rejected）。一旦Promise 被 resolve 或 reject，不能再迁移至其他任何状态。
+ 在实际应用的时候，我们很容易会碰到这样的场景，不管Promise最后的状态如何，都要执行一些最后的操作。我们把这些操作放到 finally 中，也就是说 finally 注册的函数是与 Promise 的状态无关的，不依赖 Promise 的执行结果。
+Promise.resolve 的入参可能有以下几种情况：
 
-
+无参数 [直接返回一个resolved状态的 Promise 对象]
+普通数据对象 [直接返回一个resolved状态的 Promise 对象]
+一个Promise实例 [直接返回当前实例]
+一个thenable对象(有then方法的对象，立即执行then方法)
+Promise.all 入参是一个 Promise 的实例数组，然后注册一个 then 方法，然后是数组中的 Promise 实例的状态都转为 fulfilled 之后则执行 then 方法。
 
 ### 如何给fetch增加超时时间
 （用promise模拟）
 
+### js事件循环
+js单线程 同步执行任务，异步任务有异步队列，会将事件挂起，等主线程空闲执行，会队列中的任务一次取出，
+异步任务执行优先级有区别，macro task与micro task
+以下事件属于宏任务：
+`setInterval()`
+`setTimeout()`
+以下事件属于微任务
+`new Promise()`
+`new MutaionObserver()`
+执行完任务队列头的宏任务后就开始执行微任务队列中的微任务，直到微任务队列为空。
+### node事件循环
 
-### 1.如何前端进行代码检测
+* 应用层：   即 JavaScript 交互层，常见的就是 Node.js 的模块，比如 http，fs
+* V8引擎层：  即利用 V8 引擎来解析JavaScript 语法，进而和下层 API 交互
+* NodeAPI层：  为上层模块提供系统调用，一般是由 C 语言来实现，和操作系统进行交互 。
+* LIBUV层： 是跨平台的底层封装，实现了 事件循环、文件操作等，是 Node.js 实现异步的核心 。
+
+
+
+### 如何前端进行代码检测
 （圈复杂度(Cyclomatic complexity)描写了代码的复杂度，可以理解为覆盖代码所有场景所需要的最少测试用例数量。CC 越高，代码则越不好维护）
-### 2.你的前端项目资源缓存配置策略
+### 你的前端项目资源缓存配置策略
 （ 2个指标，静态资源的加载速度，页面渲染速度，
 1.html是不能缓存的，设置极短的max-age的值，或者设置cache-control：no-cache
 2。js css img文件
 通过版本控制，wenpack打包生成hash值，每次打包才会改变。可以给http header设置较大的缓存时间 ，避免304请求和服务器进行进球链接 
-### web font 
+### web font 网页字体
 浏览器在DOMNode的CSS选择器中发现@font-face时才会下载web fonts文件，这个时候浏览器已经下载完成html/css/js文件；
 如果在浏览器发现需要加载font文件之前就告诉浏览器下载font文件，会加快文件下载和页面加载速度。
 静态资源加http headers缓存。页面关键文件，路由文件可以做预加载，就是在首屏加载完毕的时候预先加载路由文件。
@@ -312,7 +388,7 @@ Fetch为原生方法，fetch第一个参数为url，第二个参数默认为get�
 ### SVG图标颜色文字继承与填充
 svg { fill: #369; }
 
-## <div id="vue">VUE</div>
+## VUE
 ### Vue动画的原理
 （Vue内部通过window.getComputedStyle()这个API接口获取到了transition或animation的结束时间,然后通过绑定transitionend或animationend事件(对应不同的动画结束事件)执行一个回调函数，该回调函数会将DOM节点设置为一个注释节点）
 
@@ -438,25 +514,24 @@ $attrs、$listeners
 Provide、inject
 ### 你都做过哪些Vue的性能优化？
 编码阶段
-o尽量减少data中的数据，data中的数据都会增加getter和setter，会收集对应的watcher
-ov-if和v-for不能连用
-o如果需要使用v-for给每项元素绑定事件时使用事件代理
-oSPA 页面采用keep-alive缓存组件
-o在更多的情况下，使用v-if替代v-show
-okey保证唯一
-o使用路由懒加载、异步组件
-o防抖、节流
-o第三方模块按需导入
-o长列表滚动到可视区域动态加载
-o图片懒加载
-oTree shaking webpack 构建重要的一部分,清除项目中无用代码(webpack 4+自动开启摇树)
-oSplit chunks 按需加载
-o拆包将项目用到的react的包放到cdn,每次拉取react资源可以强制命中缓存
-o经常重构删除多余重复代码
-o后端必备gzip
+ * 尽量减少data中的数据，data中的数据都会增加getter和setter，会收集对应的watcher
+ * v-if和v-for不能连用
+ * 如果需要使用v-for给每项元素绑定事件时使用事件代理
+ * SPA 页面采用keep-alive缓存组件
+ * 在更多的情况下，使用v-if替代v-show
+ * key保证唯一
+ * 使用路由懒加载、异步组件
+ * 防抖、节流
+ * 第三方模块按需导入
+ * 长列表滚动到可视区域动态加载
+ * 图片懒加载
+ * Tree shaking webpack 构建重要的一部分,清除项目中无用代码(webpack 4+自动开启摇树)
+ * Split chunks 按需加载
+ * 拆包将项目用到的react的包放到cdn,每次拉取react资源可以强制命中缓存
+ * 经常重构删除多余重复代码
+ * 后端必备gzip
 
-
-## <div id="webpack">webpack</div>
+## webpack
 ### Webpack loader和 plugin的区别
 Loader主要是文件的转换， plugin不着重操作文件，是流程开始或者结束
 plugin是一个扩展器，它丰富了webpack本身，针对是loader结束后，webpack打包的整个过程，它并不直接操作文件，而是基于事件机制工作，会监听webpack打包过程中的某些节点，执行广泛的任务，比如合并压缩
@@ -489,6 +564,7 @@ DLL：
  * 使用 DllPlugin 进行分包，使用 DllReferencePlugin(索引链接) 对 manifest.json 引用，让一些基本不会改动的代码先打包成静态资源，避免反复编译浪费时间。
 
 
+## 其他
 ### 为什么要使用pm2
 对于这个问题，先说说我的看法，最基本的原因是因为node本身是一个单线程应用，它的特点就是所有方法都是串行一次执行，并且node并没有能力像Java一样独自去创建一个新的线程来实现异步操作，如果在执行I/O中遇到了阻塞就会降低整个应用的执行效率，导致CPU使用率高等不利原因。
 因此在这种模式下，一个线程只能处理一个任务，要想提高吞吐量必须通过多线程。虽然单线程的好处有很多比如避免了线程同步或者死锁、状态同步等等之类的问题，但是在应用和计算能力要求日益倍增的今天，单线程最大的弊端就是无法利用多核CPU带来的优势来提升运行效率。
@@ -504,13 +580,14 @@ PM2是具有内置负载平衡器的Node.js / io.js应用程序的生产过程�
 避免将类型推断为联合类型。
 但我们可以通过添加一个 const assertion 来解决redux里面action的类型严格为声明的type而不是字符串
 
+### 如何在https里面发送http请求 
+img
+加上
+```
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+```
+即可
 
-
-
-
-
-
-
-	
-	
-
+### 现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目
+微前端
+iframe
