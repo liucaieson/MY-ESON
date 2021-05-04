@@ -1,4 +1,4 @@
-- [REACT](#react)
+-- [REACT](#react)
   - [1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较](#1pure-components和components的区别purecomponent-将对属性和状态进行浅比较)
   - [2.React的props和state分别是什么？](#2react的props和state分别是什么)
   - [3.React 中 setState 什么时候是同步的，什么时候是异步的](#3react-中-setstate-什么时候是同步的什么时候是异步的)
@@ -33,9 +33,11 @@
   - [UseCallback 和 useMemo](#usecallback-和-usememo)
   - [React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化](#react-项目中有哪些细节可以优化实际开发中都做过哪些性能优化)
 - [浏览器](#浏览器)
+  - [浏览器的回流与重绘](#浏览器的回流与重绘)
   - [cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑](#cookiessessionsessionstoragelocalstoragesession储存于服务端cookies存储于浏览器本地存储有什么坑)
   - [多window tab页签之间的通信怎么做](#多window-tab页签之间的通信怎么做)
   - [Xss攻击，反射性，储存型，dom型；](#xss攻击反射性储存型dom型)
+  - [事件冒泡与捕获](#事件冒泡与捕获)
 - [CSS](#css)
   - [是否熟悉flex。](#是否熟悉flex)
   - [css实现固定宽高比用](#css实现固定宽高比用)
@@ -66,6 +68,8 @@
   - [js函数参数通过的值传递还是引用传递](#js函数参数通过的值传递还是引用传递)
   - [promise原理](#promise原理)
   - [如何给fetch增加超时时间](#如何给fetch增加超时时间)
+  - [innerHTML和outHTML的区别](#innerhtml和outhtml的区别)
+  - [innerText和textContent的区别](#innertext和textcontent的区别)
   - [js事件循环](#js事件循环)
   - [node事件循环](#node事件循环)
   - [如何前端进行代码检测](#如何前端进行代码检测)
@@ -106,7 +110,6 @@
   - [ts 的as const 什么意思](#ts-的as-const-什么意思)
   - [如何在https里面发送http请求](#如何在https里面发送http请求)
   - [现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目](#现在有多个spa的项目有angular的有vue的和react的如何将他们合并成一个大统一的spa项目)
-
 
 
 ## REACT
@@ -152,6 +155,7 @@ dangerousLySetInnerHtml
 ### 14.每次组件渲染时调用函数的常见错误是什么？
 你需要确保在将函数作为参数传递时未调用该函数。传递函数本身应该没有括号：(在组件上写函数，带不带括号，什么时候不带)
 ### 15.为什么有组件名称要首字母大写?
+避免与html原生标签混合，为了babel的识别
 ### 16.你在react项目如何使用样式
 Cssmoudle 使用css classname库来组装 , css in js的方式
 ### 17.如果在构造函数中使用 setState() 会发生什么？
@@ -207,6 +211,58 @@ Hooks以链表的形式储存了hooks，在条件语句如果第一次生成了h
 减少子组件渲染
 
 ## 浏览器
+### 浏览器的回流与重绘
+ * 渲染树中部分或全部元素的尺寸、结构、或某些属性发生改变时，浏览器重新渲染部分或全部文档的过程称为回流
+- 页面首次渲染
+- 浏览器窗口大小发生改变
+- 元素尺寸或位置发生改变
+- 元素内容变化（文字数量或图片大小等等）
+- 元素字体大小变化
+- 添加或者删除可见的DOM元素
+- 激活CSS伪类（例如：:hover）
+- 查询某些属性或调用某些方法
+clientWidth、clientHeight、clientTop、clientLeft
+offsetWidth、offsetHeight、offsetTop、offsetLeft
+scrollWidth、scrollHeight、scrollTop、scrollLeft
+scrollIntoView()、scrollIntoViewIfNeeded()
+getComputedStyle()
+getBoundingClientRect()
+scrollTo()
+
+
+
+这些会导致回流
+
+
+ 当页面中元素样式的改变并不影响它在文档流中的位置时（例如：color、background-color、visibility等），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。
+
+ 回流比重绘代价高，现代浏览器的优化会维护一个队列，把所有引起回流的操作放到队列中，到达阈值会情况一次更新
+ 当你访问以下属性或方法时，浏览器会立刻清空队列：
+
+```
+clientWidth、clientHeight、clientTop、clientLeft
+
+offsetWidth、offsetHeight、offsetTop、offsetLeft
+
+scrollWidth、scrollHeight、scrollTop、scrollLeft
+
+width、height
+
+getComputedStyle()
+
+getBoundingClientRect()
+```
+因为队列中可能会有影响到这些属性或方法返回值的操作，即使你希望获取的信息与队列中操作引发的改变无关，浏览器也会强行清空队列，确保你拿到的值是最精确的。
+
+**避免**
+
+* 避免使用table布局。
+* 尽可能在DOM树的最末端改变class。
+* 避免设置多层内联样式。
+* 将动画效果应用到position属性为absolute或fixed的元素上。
+* 避免使用CSS表达式例如：calc()
+* 避免频繁操作样式，dom，频繁读取会引入回流，多次使用请缓存，动画绝对定位
+
 ### cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑
 （cookies 只有4kb，可以被浏览器带上。Local。Ios隐私模式，会报错）
 Localsorage的异常处理用try catch处理
@@ -230,6 +286,12 @@ DOM XSS：比如eval（）会执行恶意代码。
 钓鱼攻击
 中间人攻击：
 无线攻击：
+
+### 事件冒泡与捕获
+addEventListener第三个参数 
+true - 事件句柄在捕获阶段执行（即在事件捕获阶段调用处理函数）
+false- false- 默认。事件句柄在冒泡阶段执行
+事件代理
 
 ## CSS
 ### 是否熟悉flex。
@@ -350,6 +412,18 @@ Promise.all 入参是一个 Promise 的实例数组，然后注册一个 then �
 
 ### 如何给fetch增加超时时间
 （用promise模拟）
+
+### innerHTML和outHTML的区别
+ * innerHTML设置或获取于对象起始和结束标签内的HTML
+ * outerHTML设置或获取对象以及起内容的HTML形式
+
+### innerText和textContent的区别
+innerText的值依赖于浏览器的显示，textContent依赖于代码的显示
+如果一个元素之间包含了script标签或者style标签，innerText是获取不到这两个元素之间的文本的，而textContent可以
+textContent会把空标签解析成换行
+innerText只会把block元素类型的空标签解析换行，并且如果是多个的话仍看成是一个，而inline类型的原素则解析成空格
+innerText的设置会引发浏览器的回流操作，而textContent则不一定会
+
 
 ### js事件循环
 js单线程 同步执行任务，异步任务有异步队列，会将事件挂起，等主线程空闲执行，会队列中的任务一次取出，
