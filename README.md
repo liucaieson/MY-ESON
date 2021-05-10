@@ -122,7 +122,21 @@ props 是传递给组件的（类似于函数的形参），而 state 是在组�
 props 是不可修改的，所有 React 组件都必须像纯函数一样保护它们的 props 不被更改。 由于 props 是传入的，并且它们不能更改，因此我们可以将任何仅使用 props 的 React 组件视为 pureComponent，也就是说，在相同的输入下，它将始终呈现相同的输出。
 
 ### 3.React 中 setState 什么时候是同步的，什么时候是异步的
-（比如通过onClick引发的事件处理），由React控制的事件处理程序，以及生命周期函数调用setState不会同步更新state 。React控制之外的事件中调用setState是同步更新的。比如原生js绑定的事件，setTimeout/setInterval等因为事件处理函数会修改同步的变量，把更新state放到队列之中，异步更新，同步执行）
+1. 合成事件与生命周期钩子函数中 setState 是异步的。
+2. 原生事件和定时器事件中 setState 是同步的。
+setState 更新过程
+1. 每次调用 setState 时，会将 setState 传入的 partialState 参数存储当前组件实例的 state 暂存队列中。
+2. 判断当前 React 是否处于批量更新状态，如果是，将当前组件加入待更新的组件队列 dirtyComponent 中。
+3. 如果未处于批量更新状态，将批量更新状态标识 isBatchingUpdate 设为 true ，用事务调用前一步方法，保证当前组件加入到待更新组件队列中。
+4. 调用事务的 warpper 方法，遍历待更新组件依次执行更新。
+5. 执行生命周期componentWillReceiveProps。
+6. 将组件的state暂存队列中的 state 进合并，获得最终要更新的 state 对象，并将队列置为空。
+7. 执行生命周期 componentShouldUpdate ，根据返回值判断是否要继续更新。
+8. 执行生命周期 componentWillUpdate 。
+9. 执行真正的更新，render。
+10. 执行生命周期 componentDidUpdate 。
+
+
 ### 4.什么情况下需要使用 shouldComponentUpdate
  父组件发生率更新子组件都会更新，用来阻止无用更新
 ### 5.React如何插入富文本
@@ -135,6 +149,7 @@ dangerousLySetInnerHtml
 （key来帮助react标识那些项有更改）
 ### 9.是否使用过错误边界，如果发生错误如何避免组件数崩溃
 （componentDidCatch）
+通过ErrorBoundary捕获渲染过程中的异常，window.addEventListener('error',cb) 捕获资源或者其他错误的异常，http拦截器捕获请求异常，让整个项目的异常可控。
 ### 10.什么是受控组件和非受控组件。
 ### 11.React的生命周期，那些被废弃，新版本增加了那个声明周期。
 挂载`constructor(),`
