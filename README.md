@@ -1,4 +1,5 @@
--- [REACT](#react)
+
+- [REACT](#react)
   - [1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较](#1pure-components和components的区别purecomponent-将对属性和状态进行浅比较)
   - [2.React的props和state分别是什么？](#2react的props和state分别是什么)
   - [3.React 中 setState 什么时候是同步的，什么时候是异步的](#3react-中-setstate-什么时候是同步的什么时候是异步的)
@@ -20,6 +21,11 @@
   - [19.如何在调整浏览器大小时重新渲染视图?](#19如何在调整浏览器大小时重新渲染视图)
   - [20.你怎么做的权限验证？](#20你怎么做的权限验证)
   - [21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理](#21react项目中constructor-thistarget--thisfuncbindthis-jsx里onchangethistarget的写法为什么要比非-bind的func----的写法效率高-请解释其中的原理)
+- [Hooks](#hooks)
+  - [为什么不能在条件语句循环语句中使用hooks](#为什么不能在条件语句循环语句中使用hooks)
+  - [UseCallback 和 useMemo](#usecallback-和-usememo)
+  - [React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化](#react-项目中有哪些细节可以优化实际开发中都做过哪些性能优化)
+  - [useEffect和useLayoutEffect区别](#useeffect和uselayouteffect区别)
 - [Redux](#redux)
   - [说一下redux。以及redux-thunk和redux-saga，dva.js。](#说一下redux以及redux-thunk和redux-sagadvajs)
   - [聊聊 Redux 和 Vuex 的设计思想](#聊聊-redux-和-vuex-的设计思想)
@@ -28,10 +34,6 @@
   - [国际化（react-intl）](#国际化react-intl)
   - [为什么在componentDidmount里写请求](#为什么在componentdidmount里写请求)
   - [react事件绑定](#react事件绑定)
-- [Hooks](#hooks)
-  - [为什么不能在条件语句循环语句中使用hooks](#为什么不能在条件语句循环语句中使用hooks)
-  - [UseCallback 和 useMemo](#usecallback-和-usememo)
-  - [React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化](#react-项目中有哪些细节可以优化实际开发中都做过哪些性能优化)
 - [浏览器](#浏览器)
   - [浏览器的回流与重绘](#浏览器的回流与重绘)
   - [cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑](#cookiessessionsessionstoragelocalstoragesession储存于服务端cookies存储于浏览器本地存储有什么坑)
@@ -110,8 +112,6 @@
   - [ts 的as const 什么意思](#ts-的as-const-什么意思)
   - [如何在https里面发送http请求](#如何在https里面发送http请求)
   - [现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目](#现在有多个spa的项目有angular的有vue的和react的如何将他们合并成一个大统一的spa项目)
-
-
 ## REACT
 
 ### 1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较
@@ -149,7 +149,9 @@ dangerousLySetInnerHtml
 （key来帮助react标识那些项有更改）
 ### 9.是否使用过错误边界，如果发生错误如何避免组件数崩溃
 （componentDidCatch）
-通过ErrorBoundary捕获渲染过程中的异常，window.addEventListener('error',cb) 捕获资源或者其他错误的异常，http拦截器捕获请求异常，让整个项目的异常可控。
+通过ErrorBoundary捕获渲染过程中的异常，
+window.addEventListener('error',cb) 捕获资源或者其他错误的异常，
+http拦截器捕获请求异常，让整个项目的异常可控。
 ### 10.什么是受控组件和非受控组件。
 ### 11.React的生命周期，那些被废弃，新版本增加了那个声明周期。
 挂载`constructor(),`
@@ -184,6 +186,24 @@ Cssmoudle 使用css classname库来组装 , css in js的方式
 bind之后锁定了上下文，不用向上查找
 箭头函数是实例上的方法，而函数声明是在原型上的方法。
 
+## Hooks
+### 为什么不能在条件语句循环语句中使用hooks
+1.不要 在 循环、条件语句或者嵌套函数中调用hooks 
+2.只能在 React 函数组件中调用hooks 顶部调用
+Hooks以链表的形式储存了hooks，在条件语句如果第一次生成了hooks，第二次渲染条件为false会导致取到了上一个hooks。
+
+### UseCallback 和 useMemo 
+`useCallback` 和 `useMemo `都是性能优化的手段，在声明周期内缓存函数，避免多次渲染。
+`useCallback`需要配合`React.memo`使用
+`React.memo`对比函数组件的props
+
+### React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化
+资源减少式最有效的提升首屏加载的体验
+减少子组件渲染
+
+### useEffect和useLayoutEffect区别
+useEffect和useLayoutEffect作为组件的副作用，本质上是一样的。共用一套结构来存储effect链表。整体流程上都是先在render阶段，生成effect，并将它们拼接成链表，存到fiber.updateQueue上，最终带到commit阶段被处理。他们彼此的区别只是最终的执行时机不同，一个异步一个同步，这使得useEffect不会阻塞渲染，而useLayoutEffect会阻塞渲染。
+
 ##  Redux
 ### 说一下redux。以及redux-thunk和redux-saga，dva.js。
 处理异步操作，redux操作是同步的，没有副作用。因为视图的渲染是同步的网络请求是异步的，请求结束后，视图可能渲染完毕，数据也就没用的，redux就是解决这个问题，异步解决视图更新。
@@ -196,6 +216,8 @@ Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会
 ### 聊聊 Redux 和 Vuex 的设计思想
 共同点：都是为响应式编程提供的一个的可预测的状态容器。方便在复杂的应用中进行兄弟组件或者子组件里修改状态。
 不同点：状态改变时 redux 通过纯函数（reduce）生成新的 state, 而vux是直接修改状态属性,最后出发相应的跟新操作
+
+
 
 ### 我可以在redux触发一个action吗？
 （不行，反模式）
@@ -210,20 +232,6 @@ React 内部将事件做了兼容处理，原生事件为空函数，将事件�
 React 发现事件有对应事件才会绑定React并不是将click事件绑在该div的真实DOM上，而是在document处监听所有支持的事件，当事件发生并冒泡至document处时，React将事件内容封装并交由真正的处理函数运行。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件。
 另外冒泡到 document 上的事件也不是原生浏览器事件，而是 React 自己实现的合成事件。因此我们如果不想要事件冒泡的话，调用 event.stopPropagation 是无效的，而应该调用 event.preventDefault。
 
-## Hooks
-### 为什么不能在条件语句循环语句中使用hooks
-1.不要 在 循环、条件语句或者嵌套函数中调用hooks 
-2.只能在 React 函数组件中调用hooks
-Hooks以链表的形式储存了hooks，在条件语句如果第一次生成了hooks，第二次渲染条件为false会导致取到了上一个hooks。
-
-### UseCallback 和 useMemo 
-`useCallback` 和 `useMemo `都是性能优化的手段，在声明周期内缓存函数，避免多次渲染。
-`useCallback`需要配合`React.memo`使用
-`React.memo`对比函数组件的props
-
-### React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化
-资源减少式最有效的提升首屏加载的体验
-减少子组件渲染
 
 ## 浏览器
 ### 浏览器的回流与重绘
@@ -243,8 +251,6 @@ scrollIntoView()、scrollIntoViewIfNeeded()
 getComputedStyle()
 getBoundingClientRect()
 scrollTo()
-
-
 
 这些会导致回流
 
@@ -285,13 +291,13 @@ Localsorage的异常处理用try catch处理
 Localstorage 在某些浏览器会有bug，比如，在iPhone/iPad上有时设置setItem()时会出现诡异的QUOTA_EXCEEDED_ERR错误，这时一般在setItem之前，先removeItem()就ok了。
 
 ### 多window tab页签之间的通信怎么做
-（
+
 ·  window.open与window.opener （基于当前window生成子window，实现父->子window的通信）
 ·  localStorage与window.onstorage （监听onstorage的event对象key的变化，实现tab间通信）
 ·  BroadCast Channel （创建一个单独通信通道，tab在这个通道内进行通信）
 ·  Shared worker （开启一个共享的工作线程，tab在这个共享线程内进行通信）
 例如：点击图片打开一个新的window，1s后替换成别的图片。（opener是父窗口的实例。）
-）
+
 
 ### Xss攻击，反射性，储存型，dom型；
 反射型：提交的不可信的数据被立刻返回（比如浏览器后面加恶意参数）。（主要是攻击者设计链接采用社会工程学手段猜用户行为）
@@ -368,7 +374,6 @@ css不会阻塞dom解析，css会阻塞dom渲染，css加载会阻塞后面的js
 子类构建实例时可以向父类传递参数
   - 缺点：父类的方法不能复用，子类实例的方法每次都是单独创建的。
 
-
 ### call、apply 以及 bind 
 call 和 apply 的共同点
 它们的共同点是，都能够改变函数执行时的上下文，将一个对象的方法交给另一个对象来执行，并且是立即执行的。借用其他的对象方法，节省内存占用。
@@ -392,6 +397,7 @@ for in更适合遍历对象，不要使用for in遍历数组，for of遍历的�
 ### 如何判断图片加载完成。
 有一个方法image.onload
 ### 10个ajax请求，全部返回结果，只允许3次失败。失败3次报错。
+
 ```
 let errorCount = 0 
 let p = new Promise((resolve, reject) => { if (success) { resolve(res.data) } else { errorCount++ if (errorCount > 3) {
@@ -406,8 +412,10 @@ let p = new Promise((resolve, reject) => { if (success) { resolve(res.data) } el
 Fetch为原生方法，fetch第一个参数为url，第二个参数默认为get，使用js的promise对象，执行成功的第一步，可以使用response.json方法取出来，fetch跨域不会带cookie，需要手动指定。服务器返回400 500错误的时候不会reject，只有网络错误导致请求不能完成的时候，才会被reject。
 .fetch的响应类型response.,type
 (basic同域，cors 服务端设置跨域头，opaque不透明，跨域) 让fetch带上cookie（credentials）；
+
 ### 手机软键盘只允许用户输入数字和小数点
 （1.模拟键盘，2.正则替换异常字符，3.操作后确认。）
+
 ### 深拷贝和浅拷贝的区别？
 （深拷贝和浅拷贝是针对复杂数据类型来说的，浅拷贝只拷贝一层，而深拷贝是层层拷贝，这种深copy的缺陷JSON.parse(JSON.stringify(obj))）
 
@@ -439,7 +447,6 @@ textContent会把空标签解析成换行
 innerText只会把block元素类型的空标签解析换行，并且如果是多个的话仍看成是一个，而inline类型的原素则解析成空格
 innerText的设置会引发浏览器的回流操作，而textContent则不一定会
 
-
 ### js事件循环
 js单线程 同步执行任务，异步任务有异步队列，会将事件挂起，等主线程空闲执行，会队列中的任务一次取出，
 异步任务执行优先级有区别，macro task与micro task
@@ -450,6 +457,7 @@ js单线程 同步执行任务，异步任务有异步队列，会将事件挂�
 `new Promise()`
 `new MutaionObserver()`
 执行完任务队列头的宏任务后就开始执行微任务队列中的微任务，直到微任务队列为空。
+
 ### node事件循环
 
 * 应用层：   即 JavaScript 交互层，常见的就是 Node.js 的模块，比如 http，fs
@@ -457,15 +465,15 @@ js单线程 同步执行任务，异步任务有异步队列，会将事件挂�
 * NodeAPI层：  为上层模块提供系统调用，一般是由 C 语言来实现，和操作系统进行交互 。
 * LIBUV层： 是跨平台的底层封装，实现了 事件循环、文件操作等，是 Node.js 实现异步的核心 。
 
-
-
 ### 如何前端进行代码检测
 （圈复杂度(Cyclomatic complexity)描写了代码的复杂度，可以理解为覆盖代码所有场景所需要的最少测试用例数量。CC 越高，代码则越不好维护）
+
 ### 你的前端项目资源缓存配置策略
 （ 2个指标，静态资源的加载速度，页面渲染速度，
 1.html是不能缓存的，设置极短的max-age的值，或者设置cache-control：no-cache
 2。js css img文件
 通过版本控制，wenpack打包生成hash值，每次打包才会改变。可以给http header设置较大的缓存时间 ，避免304请求和服务器进行进球链接 
+
 ### web font 网页字体
 浏览器在DOMNode的CSS选择器中发现@font-face时才会下载web fonts文件，这个时候浏览器已经下载完成html/css/js文件；
 如果在浏览器发现需要加载font文件之前就告诉浏览器下载font文件，会加快文件下载和页面加载速度。
