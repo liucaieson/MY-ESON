@@ -1,4 +1,3 @@
-
 - [REACT](#react)
   - [1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较](#1pure-components和components的区别purecomponent-将对属性和状态进行浅比较)
   - [2.React的props和state分别是什么？](#2react的props和state分别是什么)
@@ -20,7 +19,9 @@
   - [18.在组件类中方法的推荐的书写顺序是什么?](#18在组件类中方法的推荐的书写顺序是什么)
   - [19.如何在调整浏览器大小时重新渲染视图?](#19如何在调整浏览器大小时重新渲染视图)
   - [20.你怎么做的权限验证？](#20你怎么做的权限验证)
+  - [21虚拟dom原理](#21虚拟dom原理)
   - [21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理](#21react项目中constructor-thistarget--thisfuncbindthis-jsx里onchangethistarget的写法为什么要比非-bind的func----的写法效率高-请解释其中的原理)
+  - [react 里如何做动态加载](#react-里如何做动态加载)
 - [Hooks](#hooks)
   - [为什么不能在条件语句循环语句中使用hooks](#为什么不能在条件语句循环语句中使用hooks)
   - [UseCallback 和 useMemo](#usecallback-和-usememo)
@@ -34,12 +35,13 @@
   - [国际化（react-intl）](#国际化react-intl)
   - [为什么在componentDidmount里写请求](#为什么在componentdidmount里写请求)
   - [react事件绑定](#react事件绑定)
-- [浏览器](#浏览器)
+- [浏览器Dom Bom](#浏览器dom-bom)
   - [浏览器的回流与重绘](#浏览器的回流与重绘)
   - [cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑](#cookiessessionsessionstoragelocalstoragesession储存于服务端cookies存储于浏览器本地存储有什么坑)
   - [多window tab页签之间的通信怎么做](#多window-tab页签之间的通信怎么做)
   - [Xss攻击，反射性，储存型，dom型；](#xss攻击反射性储存型dom型)
   - [事件冒泡与捕获](#事件冒泡与捕获)
+  - [input 中如何监听值的变化](#input-中如何监听值的变化)
 - [CSS](#css)
   - [是否熟悉flex。](#是否熟悉flex)
   - [css实现固定宽高比用](#css实现固定宽高比用)
@@ -68,6 +70,7 @@
   - [手机软键盘只允许用户输入数字和小数点](#手机软键盘只允许用户输入数字和小数点)
   - [深拷贝和浅拷贝的区别？](#深拷贝和浅拷贝的区别)
   - [js函数参数通过的值传递还是引用传递](#js函数参数通过的值传递还是引用传递)
+  - [new的执行过程](#new的执行过程)
   - [promise原理](#promise原理)
   - [如何给fetch增加超时时间](#如何给fetch增加超时时间)
   - [innerHTML和outHTML的区别](#innerhtml和outhtml的区别)
@@ -112,6 +115,9 @@
   - [ts 的as const 什么意思](#ts-的as-const-什么意思)
   - [如何在https里面发送http请求](#如何在https里面发送http请求)
   - [现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目](#现在有多个spa的项目有angular的有vue的和react的如何将他们合并成一个大统一的spa项目)
+  - [node 引入一个模块的过程是什么](#node-引入一个模块的过程是什么)
+
+
 ## REACT
 
 ### 1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较
@@ -146,13 +152,21 @@ dangerousLySetInnerHtml
 ### 7.HTML 和 React 事件处理有什么区别?
 （html小写，可以用false阻止，react驼峰，e.PerventDefault阻止）
 ### 8.什么是 "key" 属性，在元素数组中使用它们有什么好处?为什么不能使用index来做key
-（key来帮助react标识那些项有更改）
+（key来帮助react标识那些项有更改），如果用index做key，每次删除操作dom会导致重新用index排序，这是做对比的时候，相同的key文本做了改变了，会导致全部渲染
 ### 9.是否使用过错误边界，如果发生错误如何避免组件数崩溃
 （componentDidCatch）
 通过ErrorBoundary捕获渲染过程中的异常，
 window.addEventListener('error',cb) 捕获资源或者其他错误的异常，
 http拦截器捕获请求异常，让整个项目的异常可控。
 ### 10.什么是受控组件和非受控组件。
+受控组件	
+1. 没有维持自己的状态	
+2.数据由父组件控制	
+3. 通过 props 获取当前值，然后通过回调通知更改	
+非受控组件
+   保持着自己的状态
+   数据由 DOM 控制
+   Refs 用于获取其当前值
 ### 11.React的生命周期，那些被废弃，新版本增加了那个声明周期。
 挂载`constructor(),`
  说说这个钩子的用法`getDerivedStateFromProps(),` 静态函数,不能使用this,props变化会触发,根据props和state,来更新state.
@@ -170,7 +184,9 @@ http拦截器捕获请求异常，让整个项目的异常可控。
 ### 13.children 属性是什么?
 （允许你将组件作为数据传递给其他组件，就像你使用的任何其他组件一样）React.Children.map、React.Children.forEach。和map方法的区别
 ### 14.每次组件渲染时调用函数的常见错误是什么？
-你需要确保在将函数作为参数传递时未调用该函数。传递函数本身应该没有括号：(在组件上写函数，带不带括号，什么时候不带)
+你需要确保在将函数作为参数传递时未调用该函数。
+传递函数本身应该没有括号：(在组件上写函数，带不带括号，什么时候不带)
+立刻调用的带括号，代表立刻执行
 ### 15.为什么有组件名称要首字母大写?
 避免与html原生标签混合，为了babel的识别
 ### 16.你在react项目如何使用样式
@@ -182,9 +198,16 @@ Cssmoudle 使用css classname库来组装 , css in js的方式
 （监听和移除监听）
 ### 20.你怎么做的权限验证？
 
+### 21虚拟dom原理
+每当底层数据发生改变时，整个 UI 都将在 Virtual DOM 描述中重新渲染。
+然后计算之前 DOM 表示与新表示的之间的差异。
+完成计算后，将只用实际更改的内容更新 real DOM。
 ### 21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理
 bind之后锁定了上下文，不用向上查找
 箭头函数是实例上的方法，而函数声明是在原型上的方法。
+
+### react 里如何做动态加载
+react.lazy 配合suspense
 
 ## Hooks
 ### 为什么不能在条件语句循环语句中使用hooks
@@ -218,7 +241,6 @@ Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会
 不同点：状态改变时 redux 通过纯函数（reduce）生成新的 state, 而vux是直接修改状态属性,最后出发相应的跟新操作
 
 
-
 ### 我可以在redux触发一个action吗？
 （不行，反模式）
 ### 访问 Redux Store 的正确方法是什么?
@@ -233,7 +255,7 @@ React 发现事件有对应事件才会绑定React并不是将click事件绑在�
 另外冒泡到 document 上的事件也不是原生浏览器事件，而是 React 自己实现的合成事件。因此我们如果不想要事件冒泡的话，调用 event.stopPropagation 是无效的，而应该调用 event.preventDefault。
 
 
-## 浏览器
+## 浏览器Dom Bom
 ### 浏览器的回流与重绘
  * 渲染树中部分或全部元素的尺寸、结构、或某些属性发生改变时，浏览器重新渲染部分或全部文档的过程称为回流
 - 页面首次渲染
@@ -253,7 +275,6 @@ getBoundingClientRect()
 scrollTo()
 
 这些会导致回流
-
 
  当页面中元素样式的改变并不影响它在文档流中的位置时（例如：color、background-color、visibility等），浏览器会将新样式赋予给元素并重新绘制它，这个过程称为重绘。
 
@@ -313,6 +334,14 @@ addEventListener第三个参数
 true - 事件句柄在捕获阶段执行（即在事件捕获阶段调用处理函数）
 false- false- 默认。事件句柄在冒泡阶段执行
 事件代理
+
+### input 中如何监听值的变化
+可以实时监听值的变化的事件有以下几种
+keypress
+keydown
+keyup
+input
+注: onChange 无法做到实时监听，因为 onChange 需要失去焦点才能触发
 
 ## CSS
 ### 是否熟悉flex。
@@ -374,6 +403,12 @@ css不会阻塞dom解析，css会阻塞dom渲染，css加载会阻塞后面的js
 子类构建实例时可以向父类传递参数
   - 缺点：父类的方法不能复用，子类实例的方法每次都是单独创建的。
 
+* 原型式继承
+利用一个空对象作为中介，将某个对象直接赋值给空对象构造函数的原型。
+缺点：
+原型链继承多个实例的引用类型属性指向相同，存在篡改的可能。
+无法传递参数
+
 ### call、apply 以及 bind 
 call 和 apply 的共同点
 它们的共同点是，都能够改变函数执行时的上下文，将一个对象的方法交给另一个对象来执行，并且是立即执行的。借用其他的对象方法，节省内存占用。
@@ -421,6 +456,12 @@ Fetch为原生方法，fetch第一个参数为url，第二个参数默认为get�
 
 ### js函数参数通过的值传递还是引用传递
 （值传递，对象传递的也是引用地址的值，传递的是副本）
+
+### new的执行过程
+创建一个空对象
+将对象的_proto_指向构造函数的 prototype
+将这个构造函数作为这个对象的this
+返回该对象
 
 ### promise原理
  Promise 必须为以下三种状态之一：等待态（Pending）、执行态（Fulfilled）和拒绝态（Rejected）。一旦Promise 被 resolve 或 reject，不能再迁移至其他任何状态。
@@ -697,3 +738,20 @@ img
 ### 现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目
 微前端
 iframe
+
+##node
+### node 引入一个模块的过程是什么
+ 路径分析 1判断内置模块  2路径形式的文件模块，./..相对路径模块和/绝对路径模块 3自定义模块 通过Module._resolveLookupPaths方法生成node_modules可能存在的路径
+
+ 2路径解析 列出所有可能的后缀名 绝对路径不再搜索  判断目录是否有斜杠，
+ 查询缓存（将request和paths通过\x00（这是空格） 合成cacheKey） 判断是否查找过
+遍历patch是将path 与request组成文件路径 basePath
+如果 basePath 存在则调用 fs.realPathSync获取文件真实路径
+将文件真实路径缓存到 Module._pathCache（key 就是前面生成的 cacheKey）
+fs.realPathSync
+查询缓存 （缓存key为p , Module._findPath 中生成的文件路径）
+从左往后遍历路径字符串 查询到 / 时，拆分路径， 判断该路径为软连接，如果时软链接则查询真实链接。并重新生成路径怕，继续向后遍历， 这里有一个细节
+遍历过程中生成的子路径base会缓存在knownHard 和cache 避免重复查询
+遍历完成得到模块对应的真实路径，此时会将原始路径priginal 作为key 真实路径作为value，保存在缓存
+require,resolve.paths 等价于 Modules._resolveLookuoPaths 获取所有node_modules可能存在路径
+查询缓存 如果路径为 / 直接返回 [‘/node_modules’]
