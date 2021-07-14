@@ -209,6 +209,52 @@ bind之后锁定了上下文，不用向上查找
 ### react 里如何做动态加载
 react.lazy 配合suspense
 
+### React 事件绑定原理
+React并不是将click事件绑在该div的真实DOM上，而是在document处监听所有支持的事件，当事件发生并冒泡至document处时，React将事件内容封装并交由真正的处理函数运行。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件。
+另外冒泡到 document 上的事件也不是原生浏览器事件，而是 React 自己实现的合成事件（SyntheticEvent）。因此我们如果不想要事件冒泡的话，调用 event.stopPropagation 是无效的，而应该调用 event.preventDefault。
+1 事件注册
+组件装载 / 更新。
+通过lastProps、nextProps判断是否新增、删除事件分别调用事件注册、卸载方法。
+调用EventPluginHub的enqueuePutListener进行事件存储
+获取document对象。
+根据事件名称（如onClick、onCaptureClick）判断是进行冒泡还是捕获。
+判断是否存在addEventListener方法，否则使用attachEvent（兼容IE）。
+给document注册原生事件回调为dispatchEvent（统一的事件分发机制）。
+2 事件储存
+EventPluginHub负责管理React合成事件的callback，它将callback存储在listenerBank中，另外还存储了负责合成事件的Plugin。
+EventPluginHub的putListener方法是向存储容器中增加一个listener。
+获取绑定事件的元素的唯一标识key。
+将callback根据事件类型，元素的唯一标识key存储在listenerBank中。
+listenerBank的结构是：listenerBank[registrationName][key]。
+3.事件触发执行
+触发document注册原生事件的回调dispatchEvent
+获取到触发这个事件最深一级的元素
+这里的事件执行利用了React的批处理机制
+代码示例
+
+<div onClick={this.parentClick} ref={ref => this.parent = ref}>
+      <div onClick={this.childClick} ref={ref => this.child = ref}>
+          test
+     </div>
+</div>
+首先会获取到this.child
+遍历这个元素的所有父元素，依次对每一级元素进行处理。
+构造合成事件。
+将每一级的合成事件存储在eventQueue事件队列中。
+遍历eventQueue。
+通过isPropagationStopped判断当前事件是否执行了阻止冒泡方法。
+如果阻止了冒泡，停止遍历，否则通过executeDispatch执行合成事件。
+释放处理完成的事件。
+
+4 合成事件
+调用EventPluginHub的extractEvents方法。
+循环所有类型的EventPlugin（用来处理不同事件的工具方法）。
+在每个EventPlugin中根据不同的事件类型，返回不同的事件池。
+在事件池中取出合成事件，如果事件池是空的，那么创建一个新的。
+根据元素nodeid(唯一标识key)和事件类型从listenerBink中取出回调函数
+返回带有合成事件参数的回调函数
+
+
 ## Hooks
 ### 为什么不能在条件语句循环语句中使用hooks
 1.不要 在 循环、条件语句或者嵌套函数中调用hooks 
@@ -239,6 +285,34 @@ Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会
 ### 聊聊 Redux 和 Vuex 的设计思想
 共同点：都是为响应式编程提供的一个的可预测的状态容器。方便在复杂的应用中进行兄弟组件或者子组件里修改状态。
 不同点：状态改变时 redux 通过纯函数（reduce）生成新的 state, 而vux是直接修改状态属性,最后出发相应的跟新操作
+
+### redux-saga 和 mobx 的比较
+1）状态管理
+
+redux-sage 是 redux 的一个异步处理的中间件。
+mobx 是数据管理库，和 redux 一样。
+2）设计思想
+
+redux-sage 属于 flux 体系， 函数式编程思想。
+mobx 不属于 flux 体系，面向对象编程和响应式编程。
+3）主要特点
+
+redux-sage 因为是中间件，更关注异步处理的，通过 Generator 函数来将异步变为同步，使代码可读性高，结构清晰。action 也不是 action creator 而是 pure action，
+在 Generator 函数中通过 call 或者 put 方法直接声明式调用，并自带一些方法，如 takeEvery，takeLast，race等，控制多个异步操作，让多个异步更简单。
+mobx 是更简单更方便更灵活的处理数据。 Store 是包含了 state 和 action。state 包装成一个可被观察的对象， action 可以直接修改 state，之后通过 Computed values 将依赖 state 的计算属性更新 ，之后触发 Reactions 响应依赖 state 的变更，输出相应的副作用 ，但不生成新的 state。
+4）数据可变性
+
+redux-sage 强调 state 不可变，不能直接操作 state，通过 action 和 reducer 在原来的 state 的基础上返回一个新的 state 达到改变 state 的目的。
+mobx 直接在方法中更改 state，同时所有使用的 state 都发生变化，不生成新的 state。
+5）写法难易度
+
+redux-sage 比 redux 在 action 和 reducer 上要简单一些。需要用 dispatch 触发 state 的改变，需要 mapStateToProps 订阅 state。
+mobx 在非严格模式下不用 action 和 reducer，在严格模式下需要在 action 中修改 state，并且自动触发相关依赖的更新。
+6）使用场景
+
+redux-sage 很好的解决了 redux 关于异步处理时的复杂度和代码冗余的问题，数据流向比较好追踪。但是 redux 的学习成本比 较高，代码比较冗余，不是特别需要状态管理，最好用别
+的方式代替。
+mobx 学习成本低，能快速上手，代码比较简洁。但是可能因为代码编写的原因和数据更新时相对黑盒，导致数据流向不利于追踪。
 
 
 ### 我可以在redux触发一个action吗？
@@ -343,6 +417,34 @@ keyup
 input
 注: onChange 无法做到实时监听，因为 onChange 需要失去焦点才能触发
 
+### 使用ES6 的Proxy实现数组负索引。 （负索引：例如，可以简单地使用arr[-1]替代arr[arr.length-1]访问最后一个元素，[-2]访问倒数第二个元素，以此类推）
+function PythonArray(arr) {
+  return new Proxy(arr, {
+    get(target, prop, receiver) {
+      if ((key = Number.parseInt(prop))) {
+        const len = Reflect.get(target, 'length', receiver);
+        prop = key < 0 && Math.abs(key) <= len ? len + key : prop;
+      }
+      return Reflect.get(target, prop, receiver);
+    },
+    set(target, prop, value, receiver) {
+      if ((key = Number.parseInt(prop))) {
+        const len = Reflect.get(target, 'length', receiver);
+        prop = key < 0 && Math.abs(key) <= len ? len + key : prop;
+      }
+      return Reflect.set(target, prop, value, receiver);
+    },
+    deleteProperty(target, prop) {
+      if ((key = Number.parseInt(prop))) {
+        const len = target.length;
+        prop = key < 0 && Math.abs(key) <= len ? len + key : prop;
+      }
+      return Reflect.deleteProperty(target, prop);
+    },
+  });
+}
+
+
 ## CSS
 ### 是否熟悉flex。
 （flex-grow：项目的放大比例，默认为0，即如果存在剩余空间，也不放大。flex-shrink：项目的缩小比例，默认为1，即如果空间不足，该项目将缩小。）
@@ -379,8 +481,68 @@ css不会阻塞dom解析，css会阻塞dom渲染，css加载会阻塞后面的js
 （js在css前面，不会等待css加载完毕就会触发这个事件，js在css的后面会在css加载完毕执行。）
 ### Background书写顺序
 （color ，image repeat attachment  postion）
+### css 伪类与伪元素区别
+1）伪类(pseudo-classes)
+
+其核⼼就是⽤来选择DOM树之外的信息,不能够被普通选择器选择的⽂档之外的元素，⽤来添加⼀些选择器的特殊效果。
+⽐如:hover :active :visited :link :visited :first-child :focus :lang等
+由于状态的变化是⾮静态的，所以元素达到⼀个特定状态时，它可能得到⼀个伪类的样式；当状态改变时，它⼜会失去这个样式。
+由此可以看出，它的功能和class有些类似，但它是基于⽂档之外的抽象，所以叫 伪类。
+2）伪元素(Pseudo-elements)
+
+DOM树没有定义的虚拟元素
+核⼼就是需要创建通常不存在于⽂档中的元素，
+⽐如::before ::after 它选择的是元素指定内容，表示选择元素内容的之前内容或之后内容。
+伪元素控制的内容和元素是没有差别的，但是它本身只是基于元素的抽象，并不存在于⽂档中，所以称为伪元素。⽤于将特殊的效果添加到某些选择器
+2）伪类与伪元素的区别
+
+表示⽅法
+
+CSS2 中伪类、伪元素都是以单冒号:表示,
+CSS2.1 后规定伪类⽤单冒号表示,伪元素⽤双冒号::表示，
+浏览器同样接受 CSS2 时代已经存在的伪元素(:before, :after, :first�line, :first-letter 等)的单冒号写法。
+CSS2 之后所有新增的伪元素(如::selection)，应该采⽤双冒号的写法。
+CSS3中，伪类与伪元素在语法上也有所区别，伪元素修改为以::开头。浏览器对以:开头的伪元素也继续⽀持，但建议规范书写为::开头
+定义不同
+
+伪类即假的类，可以添加类来达到效果
+伪元素即假元素，需要通过添加元素才能达到效果
+总结:
+
+伪类和伪元素都是⽤来表示⽂档树以外的"元素"。
+伪类和伪元素分别⽤单冒号:和双冒号::来表示。
+伪类和伪元素的区别，关键点在于如果没有伪元素(或伪类)，
+是否需要添加元素才能达到效果，如果是则是伪元素，反之则是伪类。
+4）相同之处：
+
+伪类和伪元素都不出现在源⽂件和DOM树中。也就是说在html源⽂件中是看不到伪类和伪元素的。
+不同之处：
+伪类其实就是基于普通DOM元素⽽产⽣的不同状态，他是DOM元素的某⼀特征。
+伪元素能够创建在DOM树中不存在的抽象对象，⽽且这些抽象对象是能够访问到的。
 
 ## JS
+
+### 对闭包的看法，为什么要用闭包？说一下闭包原理以及应用场景 
+1）什么是闭包
+函数执行后返回结果是一个内部函数，并被外部变量所引用，如果内部函数持有被执行函数作用域的变量，即形成了闭包。
+
+可以在内部函数访问到外部函数作用域。使用闭包，一可以读取函数中的变量，二可以将函数中的变量存储在内存中，保护变量不被污染。而正因闭包会把函数中的变量值存储在内存中，会对内存有消耗，所以不能滥用闭包，否则会影响网页性能，造成内存泄漏。当不需要使用闭包时，要及时释放内存，可将内层函数对象的变量赋值为null。
+
+2）闭包原理
+函数执行分成两个阶段(预编译阶段和执行阶段)。
+
+在预编译阶段，如果发现内部函数使用了外部函数的变量，则会在内存中创建一个“闭包”对象并保存对应变量值，如果已存在“闭包”，则只需要增加对应属性值即可。
+执行完后，函数执行上下文会被销毁，函数对“闭包”对象的引用也会被销毁，但其内部函数还持用该“闭包”的引用，所以内部函数可以继续使用“外部函数”中的变量
+利用了函数作用域链的特性，一个函数内部定义的函数会将包含外部函数的活动对象添加到它的作用域链中，函数执行完毕，其执行作用域链销毁，但因内部函数的作用域链仍然在引用这个活动对象，所以其活动对象不会被销毁，直到内部函数被烧毁后才被销毁。
+
+3）优点
+可以从内部函数访问外部函数的作用域中的变量，且访问到的变量长期驻扎在内存中，可供之后使用
+避免变量污染全局
+把变量存到独立的作用域，作为私有成员存在
+4）缺点
+对内存消耗有负面影响。因内部函数保存了对外部变量的引用，导致无法被垃圾回收，增大内存使用量，所以使用不当会导致内存泄漏
+对处理速度具有负面影响。闭包的层级决定了引用的外部变量在查找时经过的作用域链长度
+可能获取到意外的值(captured value)
 
 ### 原型链
 每一个函数都有一个prototype属性，这个属性指向函数的原型，js创建对象会从原型继承属性
@@ -426,6 +588,24 @@ bind() 方法创建一个新的函数，改变函数体内的 this 指向。不�
 2.遍历顺序有可能不是按照实际数组的内部顺序
 3.使用for in会遍历数组所有的可枚举属性，包括原型。所以for in更适合遍历对象，不要使用for in遍历数组。for of不能遍历对象
 for in更适合遍历对象，不要使用for in遍历数组，for of遍历的只是数组内的元素
+
+### 类数组和数组的区别，dom 的类数组如何转换成数组
+数组是一个特殊对象,与常规对象的区别：
+当由新元素添加到列表中时，自动更新length属性
+设置length属性，可以截断数组
+从Array.protoype中继承了方法
+属性为'Array'
+类数组是一个拥有length属性，并且他属性为非负整数的普通对象，类数组不能直接调用数组方法。
+2）区别
+本质：类数组是简单对象，它的原型关系与数组不同。
+类数组转换为数组
+
+转换方法
+使用 Array.from()
+使用 Array.prototype.slice.call()
+使用 Array.prototype.forEach() 进行属性遍历并组成新的数组
+转换须知
+转换后的数组长度由 length 属性决定。索引不连续时转换结果是连续的，会自动补位。
 
 ### websocket有时会出现掉线的问题，怎么解决？
 （心跳机制,x短线时间过长则轮询）
@@ -492,6 +672,15 @@ Fetch为原生方法，fetch第一个参数为url，第二个参数默认为get�
 将这个构造函数作为这个对象的this
 返回该对象
 
+### 关于Vue.js虚拟DOM的优缺点
+1）优点
+
+保证性能下限： 框架的虚拟 DOM 需要适配任何上层 API 可能产生的操作，它的一些 DOM 操作的实现必须是普适的，所以它的性能并不是最优的；但是比起粗暴的 DOM 操作性能要好很多，因此框架的虚拟 DOM 至少可以保证在你不需要手动优化的情况下，依然可以提供还不错的性能，即保证性能的下限；
+无需手动操作 DOM： 我们不再需要手动去操作 DOM，只需要写好 View-Model 的代码逻辑，框架会根据虚拟 DOM 和 数据双向绑定，帮我们以可预期的方式更新视图，极大提高我们的开发效率；
+跨平台： 虚拟 DOM 本质上是 JavaScript 对象,而 DOM 与平台强相关，相比之下虚拟 DOM 可以进行更方便地跨平台操作，例如服务器渲染、weex 开发等等。
+2）缺点
+无法进行极致优化： 虽然虚拟 DOM + 合理的优化，足以应对绝大部分应用的性能需求，但在一些性能要求极高的应用中虚拟 DOM 无法进行针对性的极致优化。比如VScode采用直接手动操作DOM的方式进行极端的性能优化
+
 ### promise原理
  Promise 必须为以下三种状态之一：等待态（Pending）、执行态（Fulfilled）和拒绝态（Rejected）。一旦Promise 被 resolve 或 reject，不能再迁移至其他任何状态。
  在实际应用的时候，我们很容易会碰到这样的场景，不管Promise最后的状态如何，都要执行一些最后的操作。我们把这些操作放到 finally 中，也就是说 finally 注册的函数是与 Promise 的状态无关的，不依赖 Promise 的执行结果。
@@ -502,6 +691,15 @@ Promise.resolve 的入参可能有以下几种情况：
 一个Promise实例 [直接返回当前实例]
 一个thenable对象(有then方法的对象，立即执行then方法)
 Promise.all 入参是一个 Promise 的实例数组，然后注册一个 then 方法，然后是数组中的 Promise 实例的状态都转为 fulfilled 之后则执行 then 方法。
+
+### 为什么 0.1 + 0.2 != 0.3
+因为 JS 采用 IEEE 754 双精度版本（64位），并且只要采用 IEEE 754 的语言都有该问题。
+小数算二进制和整数不同。乘法计算时，只计算小数位，整数位用作每一位的二进制，并且得到的第一位为最高位。所以我们得出 0.1 = 2^-4 * 1.10011(0011)，那么 0.2 的演算也基本如上所示，只需要去掉第一步乘法，所以得出 0.2 = 2^-3 * 1.10011(0011)。
+回来继续说 IEEE 754 双精度。六十四位中符号位占一位，整数位占十一位，其余五十二位都为小数位。因为 0.1 和 0.2 都是无限循环的二进制了，所以在小数位末尾处需要判断是否进位（就和十进制的四舍五入一样）。
+所以 2^-4 * 1.10011...001 进位后就变成了 2^-4 * 1.10011(0011 * 12次)010 。那么把这两个二进制加起来会得出 2^-2 * 1.0011(0011 * 11次)0100 , 这个值算成十进制就是 0.30000000000000004
+下面说一下原生解决办法，如下代码所示
+parseFloat((0.1 + 0.2).toFixed(10))
+
 
 ### 如何给fetch增加超时时间
 （用promise模拟）
@@ -650,6 +848,25 @@ VirtualDOM映射到真实DOM要经历VNode的create、diff、patch等阶段。
 新旧 children 中的节点只有顺序是不同的时候，最佳的操作应该是通过移动元素的位置来达到更新的目的。
 需要在新旧 children 的节点中保存映射关系，以便能够在旧 children 的节点中找到可复用的节点。key也就是children中节点的唯一标识。
 
+### 既然 Vue 通过数据劫持可以精准探测数据在具体dom上的变化,为什么还需要虚拟 DOM diff 呢
+前置知识: 依赖收集、虚拟 DOM、响应式系统
+
+现代前端框架有两种方式侦测变化，一种是 pull ，一种是 push
+
+pull: 其代表为React，我们可以回忆一下React是如何侦测到变化的,我们通常会用setStateAPI显式更新，然后React会进行一层层的Virtual Dom Diff操作找出差异，然后Patch到DOM上，React从一开始就不知道到底是哪发生了变化，只是知道「有变化了」，然后再进行比较暴力的Diff操作查找「哪发生变化了」，另外一个代表就是Angular的脏检查操作。
+
+push: Vue的响应式系统则是push的代表，当Vue程序初始化的时候就会对数据data进行依赖的收集，一但数据发生变化,响应式系统就会立刻得知。因此Vue是一开始就知道是「在哪发生变化了」，但是这又会产生一个问题，如果你熟悉Vue的响应式系统就知道，通常一个绑定一个数据就需要一个Watcher
+一但我们的绑定细粒度过高就会产生大量的Watcher，这会带来内存以及依赖追踪的开销，而细粒度过低会无法精准侦测变化,因此Vue的设计是选择中等细粒度的方案,在组件级别进行push侦测的方式,也就是那套响应式系统,通常我们会第一时间侦测到发生变化的组件,然后在组件内部进行Virtual Dom Diff获取更加具体的差异，而Virtual Dom Diff则是pull操作，Vue是push+pull结合的方式进行变化侦测的。
+
+面试官的意思是：假设有一个 input ，通过 v-model 双向绑定了 data.form.value ，当 data.form.value 的 setter 触发时，直接操作 dom：input.value = mValue 就行了，为啥还需要 vdom ？
+
+答案：
+1）应用不可能只有表单控件值改变，还有其他的元素的改动，难道也要在 setter 里面自己做吗？MVVM 重回 MVC
+2）vdom 实现的批量 dom 更新可以提供一个可靠的 dom 改动性能下限
+3）代码维护性天壤之别
+
+
+
 ### keep-alive了解吗
 keep-alive可以实现组件缓存，当组件切换时不会对当前组件进行卸载。
 常用的两个属性include/exclude，允许组件有条件的进行缓存。
@@ -730,6 +947,15 @@ Webapck性能优化
 DLL：
  * 使用 DllPlugin 进行分包，使用 DllReferencePlugin(索引链接) 对 manifest.json 引用，让一些基本不会改动的代码先打包成静态资源，避免反复编译浪费时间。
 
+### webpack 钩子
+webpack的插件机制就是在每一次编译过程中的某个时间节点做一些处理，plugin针对关键时间点如下:
+afterEmit	资源输出到目录完成	compilation	异步
+afterPlugins	启动一次新的编译	compiler	同步
+compilation	compilation对象创建完成	compilation	同步
+compile	创建compilation对象之前	compilationParams	同步
+done	完成编译	stats	同步
+emit	资源生成完成，输出之前	compilation	异步
+
 
 ## 其他
 ### 为什么要使用pm2
@@ -791,3 +1017,50 @@ fs.realPathSync
 遍历完成得到模块对应的真实路径，此时会将原始路径priginal 作为key 真实路径作为value，保存在缓存
 require,resolve.paths 等价于 Modules._resolveLookuoPaths 获取所有node_modules可能存在路径
 查询缓存 如果路径为 / 直接返回 [‘/node_modules’]
+
+### 如何封装node中间件
+在NodeJS中，中间件主要是指封装所有Http请求细节处理的方法。一次Http请求通常包含很多工作，如记录日志、ip过滤、查询字符串、请求体解析、Cookie处理、权限验证、参数验证、异常处理等，但对于Web应用而言，并不希望接触到这么多细节性的处理，因此引入中间件来简化和隔离这些基础设施与业务逻辑之间的细节，让开发者能够关注在业务的开发上，以达到提升开发效率的目的。
+
+中间件的行为比较类似Java中过滤器的工作原理，就是在进入具体的业务处理之前，先让过滤器处理。
+
+### node 中间层怎样做的请求合并转发
+1） 什么是中间层
+
+就是前端---请求---> nodejs ----请求---->后端 ----响应--->nodejs--数据处理---响应---->前端。这么一个流程，这个流程的好处就是当业务逻辑过多，或者业务需求在不断变更的时候，前端不需要过多当去改变业务逻辑，与后端低耦合。前端即显示，渲染。后端获取和存储数据。中间层处理数据结构，返回给前端可用可渲染的数据结构。
+nodejs是起中间层的作用，即根据客户端不同请求来做相应的处理或渲染页面，处理时可以是把获取的数据做简单的处理交由底层java那边做真正的数据持久化或数据更新，也可以是从底层获取数据做简单的处理返回给客户端。
+通常我们把Web领域分为客户端和服务端，也就是前端和后端，这里的后端就包含了网关，静态资源，接口，缓存，数据库等。而中间层呢，就是在后端这里再抽离一层出来，在业务上处理和客户端衔接更紧密的部分，比如页面渲染（SSR），数据聚合，接口转发等等。
+以SSR来说，在服务端将页面渲染好，可以加快用户的首屏加载速度，避免请求时白屏，还有利于网站做SEO，他的好处是比较好理解的。
+2）中间层可以做的事情
+
+代理：在开发环境下，我们可以利用代理来，解决最常见的跨域问题；在线上环境下，我们可以利用代理，转发请求到多个服务端。
+缓存：缓存其实是更靠近前端的需求，用户的动作触发数据的更新，node中间层可以直接处理一部分缓存需求。
+限流：node中间层，可以针对接口或者路由做响应的限流。
+日志：相比其他服务端语言，node中间层的日志记录，能更方便快捷的定位问题（是在浏览器端还是服务端）。
+监控：擅长高并发的请求处理，做监控也是合适的选项。
+鉴权：有一个中间层去鉴权，也是一种单一职责的实现。
+路由：前端更需要掌握页面路由的权限和逻辑。
+服务端渲染：node中间层的解决方案更灵活，比如SSR、模板直出、利用一些JS库做预渲染等等。
+3）node转发API（node中间层）的优势
+
+可以在中间层把java|php的数据，处理成对前端更友好的格式
+可以解决前端的跨域问题，因为服务器端的请求是不涉及跨域的，跨域是浏览器的同源策略导致的
+可以将多个请求在通过中间层合并，减少前端的请求
+4）如何做请求合并转发
+
+使用express中间件multifetch可以将请求批量合并
+使用express+http-proxy-middleware实现接口代理转发
+
+### 不使用用第三方模块手动实现一个nodejs代理服务器，实现请求合并转发、
+
+1.实现思路
+
+①搭建http服务器，使用Node的http模块的createServer方法
+②接收客户端发送的请求，就是请求报文，请求报文中包括请求行、请求头、请求体
+③将请求报文发送到目标服务器，使用http模块的request方法
+
+第一步：http服务器搭建
+第二步：接收客户端发送到代理服务器的请求报文
+这一步主要数据在客户端到服务器端进行传输时在nodejs中需要用到buffer来处理一下。处理过程就是将所有接收的数据片段chunk塞到一个数组中，然后将其合并到一起还原出源数据。合并方法需要用到Buffer.concat，这里不能使用加号，加号会隐式的将buffer转化为字符串，这种转化不安全。
+第三步：使用http模块的request方法，将请求报文发送到目标服务器
+第二步已经得到了客户端上传的数据，但是缺少请求头，所以在这一步根据客户端发送的请求需要构造请求头，然后发送
+
