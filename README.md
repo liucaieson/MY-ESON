@@ -1,122 +1,3 @@
-- [REACT](#react)
-  - [1.pure Components和Components的区别？PureComponent 将对属性和状态进行浅比较](#1pure-components和components的区别purecomponent-将对属性和状态进行浅比较)
-  - [2.React的props和state分别是什么？](#2react的props和state分别是什么)
-  - [3.React 中 setState 什么时候是同步的，什么时候是异步的](#3react-中-setstate-什么时候是同步的什么时候是异步的)
-  - [4.什么情况下需要使用 shouldComponentUpdate](#4什么情况下需要使用-shouldcomponentupdate)
-  - [5.React如何插入富文本](#5react如何插入富文本)
-  - [6.什么情境下使用传送门portals](#6什么情境下使用传送门portals)
-  - [7.HTML 和 React 事件处理有什么区别?](#7html-和-react-事件处理有什么区别)
-  - [8.什么是 "key" 属性，在元素数组中使用它们有什么好处?为什么不能使用index来做key](#8什么是-key-属性在元素数组中使用它们有什么好处为什么不能使用index来做key)
-  - [9.是否使用过错误边界，如果发生错误如何避免组件数崩溃](#9是否使用过错误边界如果发生错误如何避免组件数崩溃)
-  - [10.什么是受控组件和非受控组件。](#10什么是受控组件和非受控组件)
-  - [11.React的生命周期，那些被废弃，新版本增加了那个声明周期。](#11react的生命周期那些被废弃新版本增加了那个声明周期)
-  - [12.什么是高阶组件](#12什么是高阶组件)
-  - [13.children 属性是什么?](#13children-属性是什么)
-  - [14.每次组件渲染时调用函数的常见错误是什么？](#14每次组件渲染时调用函数的常见错误是什么)
-  - [15.为什么有组件名称要首字母大写?](#15为什么有组件名称要首字母大写)
-  - [16.你在react项目如何使用样式](#16你在react项目如何使用样式)
-  - [17.如果在构造函数中使用 setState() 会发生什么？](#17如果在构造函数中使用setstate会发生什么)
-  - [18.在组件类中方法的推荐的书写顺序是什么?](#18在组件类中方法的推荐的书写顺序是什么)
-  - [19.如何在调整浏览器大小时重新渲染视图?](#19如何在调整浏览器大小时重新渲染视图)
-  - [20.你怎么做的权限验证？](#20你怎么做的权限验证)
-  - [21虚拟dom原理](#21虚拟dom原理)
-  - [21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理](#21react项目中constructor-thistarget--thisfuncbindthis-jsx里onchangethistarget的写法为什么要比非-bind的func----的写法效率高-请解释其中的原理)
-  - [react 里如何做动态加载](#react-里如何做动态加载)
-- [Hooks](#hooks)
-  - [为什么不能在条件语句循环语句中使用hooks](#为什么不能在条件语句循环语句中使用hooks)
-  - [UseCallback 和 useMemo](#usecallback-和-usememo)
-  - [React 项目中有哪些细节可以优化？实际开发中都做过哪些性能优化](#react-项目中有哪些细节可以优化实际开发中都做过哪些性能优化)
-  - [useEffect和useLayoutEffect区别](#useeffect和uselayouteffect区别)
-- [Redux](#redux)
-  - [说一下redux。以及redux-thunk和redux-saga，dva.js。](#说一下redux以及redux-thunk和redux-sagadvajs)
-  - [聊聊 Redux 和 Vuex 的设计思想](#聊聊-redux-和-vuex-的设计思想)
-  - [我可以在redux触发一个action吗？](#我可以在redux触发一个action吗)
-  - [访问 Redux Store 的正确方法是什么?](#访问-redux-store-的正确方法是什么)
-  - [国际化（react-intl）](#国际化react-intl)
-  - [为什么在componentDidmount里写请求](#为什么在componentdidmount里写请求)
-  - [react事件绑定](#react事件绑定)
-- [浏览器Dom Bom](#浏览器dom-bom)
-  - [浏览器的回流与重绘](#浏览器的回流与重绘)
-  - [cookies、session、sessionStorage、localStorage（session储存于服务端，cookies存储于浏览器。本地存储有什么坑](#cookiessessionsessionstoragelocalstoragesession储存于服务端cookies存储于浏览器本地存储有什么坑)
-  - [多window tab页签之间的通信怎么做](#多window-tab页签之间的通信怎么做)
-  - [Xss攻击，反射性，储存型，dom型；](#xss攻击反射性储存型dom型)
-  - [事件冒泡与捕获](#事件冒泡与捕获)
-  - [input 中如何监听值的变化](#input-中如何监听值的变化)
-- [CSS](#css)
-  - [是否熟悉flex。](#是否熟悉flex)
-  - [css实现固定宽高比用](#css实现固定宽高比用)
-  - [Css绘制三角形](#css绘制三角形)
-  - [实现多列等高布局](#实现多列等高布局)
-  - [背景定位不随元素滚动的时候，背景定位是相对于父级还是视口？](#背景定位不随元素滚动的时候背景定位是相对于父级还是视口)
-  - [用过object-fit吗？](#用过object-fit吗)
-  - [设置按钮禁用的时候在css方面有什么注意的吗？](#设置按钮禁用的时候在css方面有什么注意的吗)
-  - [如何是block元素想inline-block一样收缩宽度包裹元素？](#如何是block元素想inline-block一样收缩宽度包裹元素)
-  - [了解过grid布局吗?](#了解过grid布局吗)
-  - [Word-break，word-wrap，white-space区别？](#word-breakword-wrapwhite-space区别)
-  - [什么情况会导致网页重绘，和重排，](#什么情况会导致网页重绘和重排)
-  - [Css会阻塞渲染吗？](#css会阻塞渲染吗)
-  - [DOMContentLoaded方法会在什么时候执行？](#domcontentloaded方法会在什么时候执行)
-  - [Background书写顺序](#background书写顺序)
-- [JS](#js)
-  - [原型链](#原型链)
-  - [继承](#继承)
-  - [call、apply 以及 bind](#callapply-以及-bind)
-  - [For in 迭代和for of区别](#for-in-迭代和for-of区别)
-  - [websocket有时会出现掉线的问题，怎么解决？](#websocket有时会出现掉线的问题怎么解决)
-  - [如何判断图片加载完成。](#如何判断图片加载完成)
-  - [10个ajax请求，全部返回结果，只允许3次失败。失败3次报错。](#10个ajax请求全部返回结果只允许3次失败失败3次报错)
-  - [基于localStorage设计一个1m的缓存系统](#基于localstorage设计一个1m的缓存系统)
-  - [Fetch](#fetch)
-  - [手机软键盘只允许用户输入数字和小数点](#手机软键盘只允许用户输入数字和小数点)
-  - [深拷贝和浅拷贝的区别？](#深拷贝和浅拷贝的区别)
-  - [js函数参数通过的值传递还是引用传递](#js函数参数通过的值传递还是引用传递)
-  - [new的执行过程](#new的执行过程)
-  - [promise原理](#promise原理)
-  - [如何给fetch增加超时时间](#如何给fetch增加超时时间)
-  - [innerHTML和outHTML的区别](#innerhtml和outhtml的区别)
-  - [innerText和textContent的区别](#innertext和textcontent的区别)
-  - [js事件循环](#js事件循环)
-  - [node事件循环](#node事件循环)
-  - [如何前端进行代码检测](#如何前端进行代码检测)
-  - [你的前端项目资源缓存配置策略](#你的前端项目资源缓存配置策略)
-  - [web font 网页字体](#web-font-网页字体)
-  - [什么是 Open Graph 协议，用来做什么](#什么是-open-graph-协议用来做什么)
-  - [SVG图标颜色文字继承与填充](#svg图标颜色文字继承与填充)
-- [VUE](#vue)
-  - [Vue动画的原理](#vue动画的原理)
-  - [vue中provide和inject 用法](#vue中provide和inject-用法)
-  - [Vue中mixins的用法](#vue中mixins的用法)
-  - [Vue的$on 和 $emit](#vue的on-和-emit)
-  - [那你能讲一讲MVVM吗？](#那你能讲一讲mvvm吗)
-  - [简单说一下Vue2.x响应式数据原理](#简单说一下vue2x响应式数据原理)
-  - [那你知道Vue3.x响应式数据原理吗？](#那你知道vue3x响应式数据原理吗)
-  - [再说一下vue2.x中如何监测数组变化](#再说一下vue2x中如何监测数组变化)
-  - [nextTick知道吗，实现原理是什么？](#nexttick知道吗实现原理是什么)
-  - [说一下Vue的生命周期](#说一下vue的生命周期)
-  - [再说一下Computed和Watch](#再说一下computed和watch)
-  - [说一下v-if和v-show的区别](#说一下v-if和v-show的区别)
-  - [组件中的data为什么是一个函数？](#组件中的data为什么是一个函数)
-  - [说一下v-model的原理](#说一下v-model的原理)
-  - [Vue事件绑定原理说一下](#vue事件绑定原理说一下)
-  - [Vue模版编译原理知道吗，能简单说一下吗？](#vue模版编译原理知道吗能简单说一下吗)
-  - [Vue2.x和Vue3.x渲染器的diff算法分别说一下](#vue2x和vue3x渲染器的diff算法分别说一下)
-  - [再说一下虚拟Dom以及key属性的作用](#再说一下虚拟dom以及key属性的作用)
-  - [keep-alive了解吗](#keep-alive了解吗)
-  - [Vue中组件生命周期调用顺序说一下](#vue中组件生命周期调用顺序说一下)
-  - [Vue2.x组件通信有哪些方式？](#vue2x组件通信有哪些方式)
-  - [你都做过哪些Vue的性能优化？](#你都做过哪些vue的性能优化)
-- [webpack](#webpack)
-  - [Webpack loader和 plugin的区别](#webpack-loader和-plugin的区别)
-  - [Webpack tree-shaking](#webpack-tree-shaking)
-  - [webpack的打包原理](#webpack的打包原理)
-- [其他](#其他)
-  - [为什么要使用pm2](#为什么要使用pm2)
-  - [什么是服务端渲染](#什么是服务端渲染)
-  - [ts 的as const 什么意思](#ts-的as-const-什么意思)
-  - [如何在https里面发送http请求](#如何在https里面发送http请求)
-  - [现在有多个spa的项目，有angular的，有vue的和react的，如何将他们合并成一个大统一的spa项目](#现在有多个spa的项目有angular的有vue的和react的如何将他们合并成一个大统一的spa项目)
-  - [node 引入一个模块的过程是什么](#node-引入一个模块的过程是什么)
-
 
 ## REACT
 
@@ -151,8 +32,6 @@ dangerousLySetInnerHtml
 （父组件overflowhidden，但子组件想展示，父组件z-index太小，fixed需要放到body第一层，第一个参数dom，react节点，第二个参数挂载节点）
 ### 7.HTML 和 React 事件处理有什么区别?
 （html小写，可以用false阻止，react驼峰，e.PerventDefault阻止）
-### 8.什么是 "key" 属性，在元素数组中使用它们有什么好处?为什么不能使用index来做key
-（key来帮助react标识那些项有更改），如果用index做key，每次删除操作dom会导致重新用index排序，这是做对比的时候，相同的key文本做了改变了，会导致全部渲染
 ### 9.是否使用过错误边界，如果发生错误如何避免组件数崩溃
 （componentDidCatch）
 通过ErrorBoundary捕获渲染过程中的异常，
@@ -179,35 +58,20 @@ http拦截器捕获请求异常，让整个项目的异常可控。
 和 `componentDidUpdate()`
 卸载 `componentWillUnmount`
 
-### 12.什么是高阶组件
-（高阶组件(HOC) 就是一个函数，且该函数接受一个组件作为参数，并返回一个新的组件）
-### 13.children 属性是什么?
-（允许你将组件作为数据传递给其他组件，就像你使用的任何其他组件一样）React.Children.map、React.Children.forEach。和map方法的区别
-### 14.每次组件渲染时调用函数的常见错误是什么？
-你需要确保在将函数作为参数传递时未调用该函数。
-传递函数本身应该没有括号：(在组件上写函数，带不带括号，什么时候不带)
-立刻调用的带括号，代表立刻执行
 ### 15.为什么有组件名称要首字母大写?
 避免与html原生标签混合，为了babel的识别
 ### 16.你在react项目如何使用样式
 Cssmoudle 使用css classname库来组装 , css in js的方式
 ### 17.如果在构造函数中使用 setState() 会发生什么？
 (除了设置状态对象之外，React 还会重新渲染组件及其所有的子组件，构造函数直接设置state， this.State == ‘xx’)
-### 18.在组件类中方法的推荐的书写顺序是什么?
 ### 19.如何在调整浏览器大小时重新渲染视图?
 （监听和移除监听）
-### 20.你怎么做的权限验证？
 
-### 21虚拟dom原理
-每当底层数据发生改变时，整个 UI 都将在 Virtual DOM 描述中重新渲染。
-然后计算之前 DOM 表示与新表示的之间的差异。
-完成计算后，将只用实际更改的内容更新 real DOM。
+
 ### 21react项目中，constructor(){ this.target = this.func.bind(this); },JSX里onChange={this.target}的写法，为什么要比非 bind的func = () => {}的写法效率高 请解释其中的原理
 bind之后锁定了上下文，不用向上查找
 箭头函数是实例上的方法，而函数声明是在原型上的方法。
 
-### react 里如何做动态加载
-react.lazy 配合suspense
 
 ### React 事件绑定原理
 React并不是将click事件绑在该div的真实DOM上，而是在document处监听所有支持的事件，当事件发生并冒泡至document处时，React将事件内容封装并交由真正的处理函数运行。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件。
